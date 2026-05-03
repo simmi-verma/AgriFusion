@@ -2,31 +2,14 @@ image: node:18
 
 stages:
   - install
-  - lint
   - test
-  - build
 
-cache:
-  paths:
-    - node_modules/
-
-install_dependencies:
+install:
   stage: install
   script:
     - npm install
 
-lint_code:
-  stage: lint
-  script:
-    - npm run lint || echo "No lint configured"
-
-test_app:
+test:
   stage: test
   script:
-    - npm test || echo "No tests configured"
-
-build_app:
-  stage: build
-  script:
-    - echo "Building Node.js + EJS app"
-    - npm run build || echo "No build step required for Express apps"
+    - npm test || echo "No tests"
