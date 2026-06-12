@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { MessageSquare, ArrowRight, User } from 'lucide-react';
+import { MessageSquare, ArrowRight, User, Trash2 } from 'lucide-react';
 
 export default function Inbox({ user }) {
   const [conversations, setConversations] = useState([]);
@@ -29,6 +29,22 @@ export default function Inbox({ user }) {
 
     fetchConversations();
   }, [user]);
+
+  const handleDeleteChat = async (chatId) => {
+    if (!window.confirm('Are you sure you want to delete this conversation? This will permanently erase the history for both participants.')) {
+      return;
+    }
+
+    try {
+      setError(null);
+      await api.delete(`/chat/${chatId}`);
+      // Remove the deleted chat from local state
+      setConversations((prev) => prev.filter((c) => c.chatId !== chatId));
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.error || 'Failed to delete the conversation.');
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-6 w-full flex-grow">
@@ -72,12 +88,21 @@ export default function Inbox({ user }) {
                   </div>
                 </div>
                 
-                <Link 
-                  to={`/chat/${conv.otherUser?._id}`}
-                  className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-sm"
-                >
-                  Open Conversation <ArrowRight className="w-4 h-4" />
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link 
+                    to={`/chat/${conv.otherUser?._id}`}
+                    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-sm"
+                  >
+                    Open Conversation <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <button
+                    onClick={() => handleDeleteChat(conv.chatId)}
+                    className="p-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition duration-150 shadow-sm border border-red-100 flex items-center justify-center"
+                    title="Delete Conversation"
+                  >
+                    <Trash2 className="w-4.5 h-4.5" />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

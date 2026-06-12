@@ -606,6 +606,40 @@ app.post('/api/chat/send', verifyToken(['customer', 'farmer']), async (req, res)
   }
 });
 
+// Delete conversation
+app.delete('/api/chat/:chatId', verifyToken(['customer', 'farmer']), async (req, res) => {
+  try {
+    const { chatId } = req.params;
+    const userId = req.user.id;
+
+    if (!mongoose.Types.ObjectId.isValid(chatId)) {
+      return res.status(400).json({ error: 'Invalid chat ID.' });
+    }
+
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ error: 'Chat conversation not found.' });
+    }
+
+    // Check if user is a participant in the conversation
+    const isParticipant = chat.participants.some(p => p.toString() === userId);
+    if (!isParticipant) {
+      return res.status(403).json({ error: 'Access denied. You are not a participant in this conversation.' });
+    }
+
+    // Delete all messages in the chat
+    await Message.deleteMany({ chatId });
+
+    // Delete the chat itself
+    await Chat.findByIdAndDelete(chatId);
+
+    res.json({ message: 'Conversation deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // 5. FARMERS / MAP ROUTES
 // Get all farmers from database
 app.get('/api/farmers', async (req, res) => {
