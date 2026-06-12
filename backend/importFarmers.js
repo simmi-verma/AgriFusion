@@ -5,7 +5,7 @@ const path = require('path');
 const Farmer = require('./models/Farmer');
 require('dotenv').config();
 
-const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/farmmarketplace';
+const mongoUrl = process.env.MONGO_URL;
 
 mongoose.connect(mongoUrl, {
   serverSelectionTimeoutMS: 5000,
