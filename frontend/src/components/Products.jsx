@@ -13,6 +13,7 @@ export default function Products({ user }) {
   // Filtering & Sorting states
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState(1500); // default maximum filter
+  const [maxPriceLimit, setMaxPriceLimit] = useState(2000); // dynamic max price limit
   const [sortBy, setSortBy] = useState(''); // 'lowToHigh', 'highToLow', ''
 
   // Modal states
@@ -42,7 +43,9 @@ export default function Products({ user }) {
       // Dynamically set price range max if crops are more expensive
       if (response.data.length > 0) {
         const highestPrice = Math.max(...response.data.map(p => p.sellingPrice || 0));
-        setPriceRange(highestPrice > 0 ? highestPrice : 1500);
+        const limit = highestPrice > 0 ? highestPrice : 2000;
+        setMaxPriceLimit(limit);
+        setPriceRange(limit);
       }
     } catch (err) {
       console.error(err);
@@ -245,11 +248,14 @@ export default function Products({ user }) {
             <input
               type="range"
               min="0"
-              max="2000"
-              step="50"
+              max={maxPriceLimit}
+              step="1"
               value={priceRange}
               onChange={(e) => setPriceRange(Number(e.target.value))}
-              className="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-green-600"
+              className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-green-600"
+              style={{
+                background: `linear-gradient(to right, #16a34a 0%, #16a34a ${maxPriceLimit > 0 ? (priceRange / maxPriceLimit) * 100 : 0}%, #e5e7eb ${maxPriceLimit > 0 ? (priceRange / maxPriceLimit) * 100 : 0}%, #e5e7eb 100%)`
+              }}
             />
           </div>
         </div>
