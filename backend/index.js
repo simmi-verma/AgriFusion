@@ -106,8 +106,8 @@ app.use(cookieParser());
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error('❌ MongoDB error:', err));
+  .then(() => console.log(' MongoDB connected'))
+  .catch(err => console.error('MongoDB error:', err));
 
 // Socket.io Real-time Chat Connection
 io.on('connection', (socket) => {
@@ -119,7 +119,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('❌ User disconnected from socket:', socket.id);
+    console.log(' User disconnected from socket:', socket.id);
   });
 });
 
@@ -846,5 +846,6 @@ app.post('/api/payment/create-payment-intent', verifyToken(['customer']), async 
 
 // Start server
 server.listen(PORT, () => {
-  console.log(`🚀 API Server running at http://localhost:${PORT}`);
+  console.log(`API Server running at http://localhost:${PORT}`);
 });
+// Trigger nodemon reload for Atlas whitelist update
