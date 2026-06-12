@@ -9,7 +9,9 @@ import { MapPin, Info, ArrowLeft, RefreshCw } from 'lucide-react';
 // Custom Map center update component
 function ChangeView({ center, zoom }) {
   const map = useMap();
-  map.setView(center, zoom);
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom, map]);
   return null;
 }
 
@@ -123,32 +125,34 @@ export default function NearbyFarmersMap() {
           )}
 
           {/* Farmer locations */}
-          {farmers.map((farmer, index) => (
-            <Marker 
-              key={index} 
-              position={[farmer.latitude, farmer.longitude]}
-              icon={farmerMarkerIcon}
-            >
-              <Popup>
-                <div className="p-1 font-sans text-xs">
-                  <div className="font-bold text-green-800 text-sm mb-1">{farmer.state} Region</div>
-                  <div className="text-gray-700 font-semibold mb-1">Crops: {farmer.crops}</div>
-                  <div className="mt-2 border-t border-gray-100 pt-1.5">
-                    {farmer.id ? (
-                      <Link 
-                        to={`/chat/${farmer.id}`} 
-                        className="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded font-bold text-[10px] block text-center transition"
-                      >
-                        ✉️ Contact Farmer
-                      </Link>
-                    ) : (
-                      <span className="text-[10px] text-gray-400 italic">No registration record</span>
-                    )}
+          {farmers
+            .filter(farmer => farmer && !isNaN(farmer.latitude) && !isNaN(farmer.longitude))
+            .map((farmer, index) => (
+              <Marker 
+                key={index} 
+                position={[farmer.latitude, farmer.longitude]}
+                icon={farmerMarkerIcon}
+              >
+                <Popup>
+                  <div className="p-1 font-sans text-xs">
+                    <div className="font-bold text-green-800 text-sm mb-1">{farmer.state} Region</div>
+                    <div className="text-gray-700 font-semibold mb-1">Crops: {farmer.crops}</div>
+                    <div className="mt-2 border-t border-gray-100 pt-1.5">
+                      {farmer.id ? (
+                        <Link 
+                          to={`/chat/${farmer.id}`} 
+                          className="bg-green-600 hover:bg-green-700 text-white px-2.5 py-1 rounded font-bold text-[10px] block text-center transition"
+                        >
+                          ✉️ Contact Farmer
+                        </Link>
+                      ) : (
+                        <span className="text-[10px] text-gray-400 italic">No registration record</span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
+                </Popup>
+              </Marker>
+            ))}
         </MapContainer>
       </div>
     </div>

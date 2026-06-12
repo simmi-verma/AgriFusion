@@ -35,9 +35,23 @@ app.set('trust proxy', 1);
 // Secure headers using Helmet
 app.use(helmet());
 
+const allowedOrigins = [
+  'https://agri-fusion.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL.replace(/\/$/, '')] : [])
+];
+
 // CORS configuration for React frontend
 app.use(cors({
-  origin: 'https://agri-fusion.vercel.app',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -94,7 +108,13 @@ const productValidators = [
 
 const io = new Server(server, {
   cors: {
-    origin: 'https://agri-fusion.vercel.app/',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST']
   }
 });

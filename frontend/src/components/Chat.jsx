@@ -56,8 +56,9 @@ export default function Chat({ user }) {
 
     // Listen for incoming messages
     socket.on('message', (newMessage) => {
+      if (!newMessage || !newMessage._id) return;
       setMessages((prev) => {
-        if (prev.some(m => m._id === newMessage._id)) return prev;
+        if (prev.some(m => m && m._id === newMessage._id)) return prev;
         return [...prev, newMessage];
       });
     });
@@ -149,7 +150,7 @@ export default function Chat({ user }) {
         ) : messages.length > 0 ? (
           messages.map((m, idx) => {
             const senderId = m.sender?._id || m.sender;
-            const isMe = senderId === user.id;
+            const isMe = senderId === user?.id;
             
             // Check if we should render the sender name tag (avoid repeating tags for consecutive messages)
             const prevMsg = idx > 0 ? messages[idx - 1] : null;
