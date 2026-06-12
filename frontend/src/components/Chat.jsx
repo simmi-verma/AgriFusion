@@ -48,7 +48,7 @@ export default function Chat({ user }) {
     if (!chatId) return;
 
     // Connect to backend socket server
-    const socket = io('http://localhost:4000');
+    const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000');
     socketRef.current = socket;
 
     // Join room
