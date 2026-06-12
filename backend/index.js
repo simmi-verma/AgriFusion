@@ -30,6 +30,8 @@ const verifyToken = require('./middleware/verifyToken');
 const app = express();
 const server = http.createServer(app);
 
+app.set('trust proxy', 1);
+
 // Secure headers using Helmet
 app.use(helmet());
 
