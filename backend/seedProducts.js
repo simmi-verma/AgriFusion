@@ -82,12 +82,12 @@ async function seedData() {
       ];
 
       await Product.insertMany(products);
-      console.log('✅ Successfully seeded 4 crops in the marketplace.');
+      console.log(' Successfully seeded 4 crops in the marketplace.');
     } else {
-      console.log('ℹ️ Products already exist in database. Seeding skipped.');
+      console.log('Products already exist in database. Seeding skipped.');
     }
   } catch (err) {
-    console.error('❌ Seeding failed:', err);
+    console.error('Seeding failed:', err);
   }
   process.exit();
 }

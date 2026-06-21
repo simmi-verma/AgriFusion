@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import api from '../api';
 import 'leaflet/dist/leaflet.css';
-import { MapPin, Info, ArrowLeft, RefreshCw } from 'lucide-react';
+import { MapPin, Info, RefreshCw } from 'lucide-react';
 
 // Custom Map center update component
 function ChangeView({ center, zoom }) {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { CreditCard, Lock, AlertCircle, RefreshCw, X } from 'lucide-react';
+import { Lock, AlertCircle, RefreshCw, X } from 'lucide-react';
 import api from '../api';
 
 export default function CheckoutForm({ totalPrice, onPaymentSuccess, onCancel }) {

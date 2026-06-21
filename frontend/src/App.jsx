@@ -54,7 +54,6 @@ export default function App() {
 
   const login = (newToken, newUser) => {
     setToken(newToken);
-    setUser(newToken ? newToken : null); // standard check
     setUser(newUser);
   };
 
@@ -96,7 +95,7 @@ export default function App() {
             <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
             <Route path="/cart" element={user && user.role === 'customer' ? <Cart user={user} /> : <Navigate to="/login" />} />
             <Route path="/inbox" element={user ? <Inbox user={user} /> : <Navigate to="/login" />} />
-            <Route path="/chat/:receiverId" element={user ? <Chat user={user} /> : <Navigate to="/login" />} />
+            <Route path="/chat/:otherParticipantId" element={user ? <Chat user={user} /> : <Navigate to="/login" />} />
             <Route path="/orders" element={user ? <Orders user={user} /> : <Navigate to="/login" />} />
             <Route path="/products/edit/:id" element={user && user.role === 'farmer' ? <EditProduct user={user} /> : <Navigate to="/login" />} />
             <Route path="/my-products" element={user && user.role === 'farmer' ? <MyProducts user={user} /> : <Navigate to="/login" />} />

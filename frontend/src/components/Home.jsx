@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Leaf, ShieldCheck, ShoppingBag, Award } from 'lucide-react';
+import { ArrowRight, Leaf, ShieldCheck, ShoppingBag } from 'lucide-react';
 
 const CAROUSEL_IMAGES = [
   '/images/rajesh-ram-HOOKgN_zIY8-unsplash.jpg',

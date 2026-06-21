@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import api from '../api';
-import { ArrowLeft, Send, MessageSquare, Clock, User } from 'lucide-react';
+import { ArrowLeft, Send, MessageSquare, User } from 'lucide-react';
 
 export default function Chat({ user }) {
-  const { receiverId } = useParams();
+  const { otherParticipantId } = useParams();
   const [messages, setMessages] = useState([]);
   const [chatId, setChatId] = useState(null);
   const [receiverName, setReceiverName] = useState('User');
@@ -28,7 +28,7 @@ export default function Chat({ user }) {
     const fetchChatDetails = async () => {
       setLoading(true);
       try {
-        const response = await api.get(`/chat/${receiverId}`);
+        const response = await api.get(`/chat/${otherParticipantId}`);
         setMessages(response.data.messages);
         setChatId(response.data.chatId);
         setReceiverName(response.data.receiverName);
@@ -41,7 +41,7 @@ export default function Chat({ user }) {
     };
 
     fetchChatDetails();
-  }, [receiverId, user]);
+  }, [otherParticipantId, user]);
 
   // 2. Connect to Socket.io server and join chat room
   useEffect(() => {

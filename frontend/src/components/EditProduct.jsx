@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api';
-import { ArrowLeft, Save, X, Trash2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useToast } from './Toast';
+import ProductForm from './shared/ProductForm';
 
 export default function EditProduct({ user }) {
   const { id } = useParams();
@@ -19,7 +20,6 @@ export default function EditProduct({ user }) {
   const [currentMarketPrice, setCurrentMarketPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
   const [tags, setTags] = useState([]);
-  const [newTagInput, setNewTagInput] = useState('');
 
   useEffect(() => {
     if (!user || (user.role !== 'farmer' && user.role !== 'admin')) {
@@ -85,16 +85,6 @@ export default function EditProduct({ user }) {
     }
   };
 
-  const addTag = (tag) => {
-    if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
-    }
-  };
-
-  const removeTag = (tagToRemove) => {
-    setTags(tags.filter(t => t !== tagToRemove));
-  };
-
   if (loading) {
     return (
       <div className="flex-grow flex flex-col justify-center items-center py-20 text-green-700 bg-green-50/20">
@@ -124,146 +114,20 @@ export default function EditProduct({ user }) {
             <span>{error}</span>
           </div>
         ) : (
-          <form onSubmit={handleSave} className="space-y-6">
-            {/* Title */}
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Crop Title</label>
-              <input 
-                type="text" 
-                placeholder="Product Title (e.g. Premium Basmati)" 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-50/30"
-                required
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Description</label>
-              <textarea 
-                placeholder="Describe your crop harvest, quality, organic standards..." 
-                value={description} 
-                onChange={(e) => setDescription(e.target.value)}
-                rows="4"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-50/30"
-                required
-              />
-            </div>
-
-            {/* Image URL */}
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Image URL</label>
-              <input 
-                type="url" 
-                placeholder="Illustration Image URL" 
-                value={imageUrl} 
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-50/30"
-                required
-              />
-              {imageUrl && (
-                <div className="mt-3 w-full h-40 rounded-2xl overflow-hidden border border-gray-100 bg-gray-50">
-                  <img src={imageUrl} alt="Crop preview" className="w-full h-full object-cover" />
-                </div>
-              )}
-            </div>
-
-            {/* Tags Section */}
-            <div className="space-y-2.5 p-4 bg-green-50/20 rounded-2xl border border-green-100/50">
-              <label className="block text-xs font-bold text-green-800 uppercase tracking-wider">Crop Tags</label>
-              
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {tags.map((tag, idx) => (
-                    <span key={idx} className="text-xs bg-green-100 text-green-800 font-bold px-2.5 py-0.5 rounded-lg border border-green-200 flex items-center gap-1">
-                      {tag}
-                      <button 
-                        type="button" 
-                        onClick={() => removeTag(tag)} 
-                        className="text-red-500 hover:text-red-700 font-black ml-1 text-[10px]"
-                      >
-                        ✕
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Custom tag (e.g. Winter crop)"
-                  value={newTagInput}
-                  onChange={(e) => setNewTagInput(e.target.value)}
-                  className="flex-grow px-3 py-2 border border-gray-200 rounded-xl text-xs bg-white focus:ring-1 focus:ring-green-500 focus:outline-none"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      if (newTagInput.trim()) {
-                        addTag(newTagInput.trim());
-                        setNewTagInput('');
-                      }
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (newTagInput.trim()) {
-                      addTag(newTagInput.trim());
-                      setNewTagInput('');
-                    }
-                  }}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-xl text-xs font-bold transition shadow-sm"
-                >
-                  Add Tag
-                </button>
-              </div>
-            </div>
-
-            {/* Pricing */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Current Market Price (₹)</label>
-                <input 
-                  type="number" 
-                  placeholder="Market Reference Price" 
-                  value={currentMarketPrice} 
-                  onChange={(e) => setCurrentMarketPrice(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-50/30"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Your Selling Price (₹)</label>
-                <input 
-                  type="number" 
-                  placeholder="Your Marketplace Rate" 
-                  value={sellingPrice} 
-                  onChange={(e) => setSellingPrice(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-gray-50/30"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex gap-4 pt-4 border-t border-gray-100 mt-6">
-              <Link 
-                to="/products"
-                className="flex-grow text-center border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-1.5"
-              >
-                Cancel
-              </Link>
-              <button 
-                type="submit"
-                className="flex-grow bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition shadow-md flex items-center justify-center gap-1.5 text-sm"
-              >
-                <Save className="w-4.5 h-4.5" /> Save Changes
-              </button>
-            </div>
-          </form>
+          <ProductForm
+            values={{ title, description, imageUrl, currentMarketPrice, sellingPrice, tags }}
+            onChange={(field, value) => {
+              if (field === 'title') setTitle(value);
+              else if (field === 'description') setDescription(value);
+              else if (field === 'imageUrl') setImageUrl(value);
+              else if (field === 'currentMarketPrice') setCurrentMarketPrice(value);
+              else if (field === 'sellingPrice') setSellingPrice(value);
+              else if (field === 'tags') setTags(value);
+            }}
+            onSubmit={handleSave}
+            submitLabel="Save Changes"
+            onCancel={() => navigate('/products')}
+          />
         )}
       </div>
     </div>

@@ -7,7 +7,7 @@ const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/farmmarketp
 
 mongoose.connect(mongoUrl)
   .then(() => {
-    console.log("🌱 Connected to MongoDB");
+    console.log(" Connected to MongoDB");
     seedAdmin();
   })
   .catch(err => {
@@ -22,7 +22,7 @@ async function seedAdmin() {
       existing.role = 'admin';
       existing.isSuspended = false;
       await existing.save();
-      console.log(`✅ User ${adminEmail} updated to ADMIN role.`);
+      console.log(` User ${adminEmail} updated to ADMIN role.`);
       process.exit();
     }
 
@@ -41,11 +41,11 @@ async function seedAdmin() {
     });
 
     await newAdmin.save();
-    console.log(`✅ Successfully seeded ADMIN superuser:`);
+    console.log(` Successfully seeded ADMIN superuser:`);
     console.log(`- Email: ${adminEmail}`);
     console.log(`- Password: adminsecure123`);
   } catch (err) {
-    console.error('❌ Failed to seed admin:', err);
+    console.error(' Failed to seed admin:', err);
   }
   process.exit();
 }

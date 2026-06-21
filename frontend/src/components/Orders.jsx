@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
-import { ArrowLeft, Clock, ShoppingCart, User, IndianRupee, Tag, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Clock, User, CheckCircle } from 'lucide-react';
 
 export default function Orders({ user }) {
   const [orders, setOrders] = useState([]);

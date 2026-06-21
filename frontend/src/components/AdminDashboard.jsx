@@ -4,7 +4,9 @@ import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { ShieldAlert, Users, TrendingUp, AlertCircle, CheckCircle, Ban, UserCheck, Inbox, Map, Activity, Send, BarChart2, Sprout, ShoppingBag } from 'lucide-react';
+import { ShieldAlert, Users, TrendingUp, AlertCircle, CheckCircle, Ban, UserCheck, Inbox, Map, Send, BarChart2, Sprout, ShoppingBag } from 'lucide-react';
+import { useToast } from './Toast';
+import ConfirmationModal from './shared/ConfirmationModal';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -29,6 +31,7 @@ const STATE_COORDINATES = {
 };
 
 export default function AdminDashboard() {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState('analytics');
   const [analytics, setAnalytics] = useState(null);
   const [users, setUsers] = useState([]);
@@ -37,6 +40,10 @@ export default function AdminDashboard() {
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Modal states
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   // Dispute chat input
   const [disputeMessage, setDisputeMessage] = useState({});
@@ -69,27 +76,30 @@ export default function AdminDashboard() {
   const handleToggleSuspend = async (userId) => {
     try {
       await api.post(`/admin/users/${userId}/suspend`);
+      toast.success('Suspension status updated.');
       fetchAdminData();
     } catch (e) {
-      alert('Failed to update suspension status.');
+      toast.error('Failed to update suspension status.');
     }
   };
 
   const handleToggleVerifyFarmer = async (userId) => {
     try {
       await api.post(`/admin/users/${userId}/verify-farmer`);
+      toast.success('Farmer verification status updated.');
       fetchAdminData();
     } catch (e) {
-      alert('Failed to update farmer credentials verification.');
+      toast.error('Failed to update farmer credentials verification.');
     }
   };
 
   const handleResolveDispute = async (disputeId) => {
     try {
       await api.post(`/admin/disputes/${disputeId}/resolve`);
+      toast.success('Dispute resolved successfully.');
       fetchAdminData();
     } catch (e) {
-      alert('Failed to resolve dispute.');
+      toast.error('Failed to resolve dispute.');
     }
   };
 
@@ -100,21 +110,26 @@ export default function AdminDashboard() {
     try {
       await api.post(`/admin/disputes/${disputeId}/message`, { message: text });
       setDisputeMessage(prev => ({ ...prev, [disputeId]: '' }));
+      toast.success('Message posted to dispute thread.');
       fetchAdminData();
     } catch (e) {
-      alert('Failed to send message.');
+      toast.error('Failed to send message.');
     }
   };
 
   const handleDeleteProduct = async (productId) => {
-    if (!window.confirm('Delete this product listing? This cannot be undone.')) return;
     try {
       await api.delete(`/products/${productId}`);
-      alert('Product listing deleted successfully.');
+      toast.success('Product listing deleted successfully.');
       fetchAdminData();
     } catch (e) {
-      alert('Failed to delete product.');
+      toast.error('Failed to delete product.');
     }
+  };
+
+  const triggerDeleteConfirm = (productId) => {
+    setProductToDelete(productId);
+    setDeleteModalOpen(true);
   };
 
   // Compile coordinates for heatmap display based on order customer location
@@ -559,7 +574,7 @@ export default function AdminDashboard() {
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDeleteProduct(p._id)}
+                          onClick={() => triggerDeleteConfirm(p._id)}
                           className="text-xs font-bold px-3 py-1.5 rounded-xl border border-red-200 bg-white text-red-600 hover:bg-red-50 transition"
                         >
                           Delete
@@ -636,6 +651,23 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setProductToDelete(null);
+        }}
+        onConfirm={() => {
+          if (productToDelete) {
+            handleDeleteProduct(productToDelete);
+          }
+        }}
+        title="Delete Crop Listing"
+        message="Are you sure you want to delete this crop listing? This cannot be undone."
+        confirmLabel="Delete"
+      />
     </div>
   );
 }
