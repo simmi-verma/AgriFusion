@@ -81,6 +81,7 @@ app.use('/api/cart', require('./routes/cart.routes'));
 app.use('/api/chat', require('./routes/chat.routes'));
 app.use('/api/farmers', require('./routes/farmer.routes'));
 app.use('/api', require('./routes/admin.routes'));
+app.use('/api', require('./routes/order.routes'));
 app.use('/api/payment', require('./routes/payment.routes'));
 
 // Start server
