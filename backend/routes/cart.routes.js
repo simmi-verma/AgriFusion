@@ -133,7 +133,7 @@ router.post('/buy', verifyToken(['customer']), async (req, res) => {
 });
 
 // Get past orders for logged in customer
-router.get('/orders', verifyToken(['customer']), async (req, res) => {
+router.get('/orders', verifyToken(['customer', 'admin']), async (req, res) => {
   try {
     const orders = await Order.find({ customerId: req.user.id })
       .populate('items.product')

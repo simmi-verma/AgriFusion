@@ -6,7 +6,7 @@ const User = require('../models/User');
 const verifyToken = require('../middleware/verifyToken');
 
 // Get list of conversations
-router.get('/conversations', verifyToken(['customer', 'farmer']), async (req, res) => {
+router.get('/conversations', verifyToken(['customer', 'farmer', 'admin']), async (req, res) => {
   try {
     const chats = await Chat.find({ participants: req.user.id }).populate('participants', 'name email role');
     const conversations = chats.map(chat => {
@@ -20,7 +20,7 @@ router.get('/conversations', verifyToken(['customer', 'farmer']), async (req, re
 });
 
 // Get/create chat with specific user (otherParticipantId)
-router.get('/:otherParticipantId', verifyToken(['customer', 'farmer']), async (req, res) => {
+router.get('/:otherParticipantId', verifyToken(['customer', 'farmer', 'admin']), async (req, res) => {
   try {
     const { otherParticipantId } = req.params;
     const userId = req.user.id;
@@ -51,7 +51,7 @@ router.get('/:otherParticipantId', verifyToken(['customer', 'farmer']), async (r
 });
 
 // Send message
-router.post('/send', verifyToken(['customer', 'farmer']), async (req, res) => {
+router.post('/send', verifyToken(['customer', 'farmer', 'admin']), async (req, res) => {
   try {
     const { chatId, content } = req.body;
     if (!content || !chatId) {
@@ -79,7 +79,7 @@ router.post('/send', verifyToken(['customer', 'farmer']), async (req, res) => {
 });
 
 // Delete conversation
-router.delete('/:chatId', verifyToken(['customer', 'farmer']), async (req, res) => {
+router.delete('/:chatId', verifyToken(['customer', 'farmer', 'admin']), async (req, res) => {
   try {
     const { chatId } = req.params;
     const userId = req.user.id;
